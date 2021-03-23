@@ -13,11 +13,11 @@ router_v1.register('users', UserViewSet, 'users')
     урлы для других моделей туточки
 """
 
-router.register(
+router_v1.register(
     "r'titles/(?P<title_id>\d+)/reviews'",
     ReviewViewSet,
     "reviews")
-router.register(
+router_v1.register(
     "r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments'",
     CommentViewSet,
     "comments")
