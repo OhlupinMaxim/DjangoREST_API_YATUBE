@@ -9,6 +9,10 @@ from user.models import User
 from user.permissions import IsAdmin
 from user.permissions import IsAuthorOrAdminOrModerator
 
+from title.models import Title
+from title.models import Category
+from title.models import Genre
+
 from review.models import Review
 
 from comment.models import Comment
@@ -48,15 +52,18 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOrAdminOrModerator, ]
 
     def get_queryset(self):
-        title_id = self.kwargs.get("title_id")
-        pass
+        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+        return Review.objects.filter(title=title)
 
     def perform_create(self, serializer):
-        title_id = self.kwargs.get("title_id")
-        pass
+        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+        serializer.save(
+            author=self.request.user,
+            title=title
+        )
 
     def partial_update(self, request, *args, **kwargs):
-        title_id = self.kwargs.get("title_id")
+        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
         pass
 
 
@@ -67,16 +74,23 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOrAdminOrModerator, ]
 
     def get_queryset(self):
-        title_id = self.kwargs.get("title_id")
-        review_id = self.kwargs.get("review_id")
-        pass
+        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+        review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
+        return Comment.objects.filter(
+            title=title,
+            review=review
+        )
 
     def perform_create(self, serializer):
-        title_id = self.kwargs.get("title_id")
-        review_id = self.kwargs.get("review_id")
-        pass
+        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+        review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
+        serializer.save(
+            title=title,
+            review=review,
+            author=self.request.user
+        )
 
     def partial_update(self, request, *args, **kwargs):
-        title_id = self.kwargs.get("title_id")
-        review_id = self.kwargs.get("review_id")
+        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+        review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
         pass

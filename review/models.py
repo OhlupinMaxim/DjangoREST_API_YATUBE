@@ -4,9 +4,7 @@ from django.db import models
 
 from user.models import User
 
-
-class Title(models.Model):
-    pass
+from title.models import Title
 
 
 class Review(models.Model):
@@ -24,7 +22,7 @@ class Review(models.Model):
                                     MaxValueValidator(10),
                                     MinValueValidator(1)
                                 ])
-    text = models.TextField
+    text = models.TextField()
 
     def __str__(self):
         return self.text[:15]
