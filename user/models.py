@@ -30,5 +30,4 @@ class User(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         verbose_name = 'User'
-        verbose_name_plural = 'Users'
         ordering = ('id', )
