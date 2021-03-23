@@ -16,3 +16,6 @@ class Comment(models.Model):
                                     auto_now_add=True,
                                     db_index=True)
     text = models.TextField
+
+    def __str__(self):
+        return self.text[:15]

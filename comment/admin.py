@@ -4,7 +4,12 @@ from comment.models import Comment
 
 
 class CommentAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "review",
+        "author",
+        "pub_date",
+        "text"
+    )
 
 
 admin.site.register(Comment, CommentAdmin)

@@ -25,3 +25,6 @@ class Review(models.Model):
                                     MinValueValidator(1)
                                 ])
     text = models.TextField
+
+    def __str__(self):
+        return self.text[:15]
