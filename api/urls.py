@@ -5,9 +5,9 @@ from .views import UserViewSet
 from .views import ReviewViewSet
 from .views import CommentViewSet
 
-router = DefaultRouter()
+router_v1 = DefaultRouter()
 
-router.register('users', UserViewSet, 'users')
+router_v1.register('users', UserViewSet, 'users')
 
 """
     урлы для других моделей туточки
@@ -23,5 +23,5 @@ router.register(
     "comments")
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('v1/', include(router_v1.urls)),
 ]
