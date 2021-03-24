@@ -1,13 +1,10 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from user.models import User
-
-from review.models import Review
-
 from comment.models import Comment
-
-from title.models import Category
+from review.models import Review
+from title.models import Category, Genre
+from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -55,3 +52,9 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = 'name', 'slug'
         model = Category
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = 'name', 'slug'
+        model = Genre

@@ -35,4 +35,14 @@ urlpatterns = [
         CategoryViewSet.as_view({'delete': 'destroy', }),
         name='Category'
     ),
+    path(
+        'v1/genres/',
+        CategoryViewSet.as_view({'get': 'list', 'post': 'create'}),
+        name='Category'
+    ),
+    path(
+        'v1/genres/<slug:slug>/',
+        CategoryViewSet.as_view({'delete': 'destroy', }),
+        name='Category'
+    ),
 ]

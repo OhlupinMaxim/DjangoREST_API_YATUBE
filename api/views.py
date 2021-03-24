@@ -7,13 +7,12 @@ from rest_framework.response import Response
 
 from comment.models import Comment
 from review.models import Review
-from title.models import Category
-from title.models import Title
+from title.models import Category, Title, Genre
 from user.models import User
 from user.permissions import IsAdmin
 from user.permissions import IsAdminOrReadOnly
 from user.permissions import IsAuthorOrAdminOrModerator
-from .serializers import CategorySerializer
+from .serializers import CategorySerializer, GenreSerializer
 from .serializers import CommentSerializer
 from .serializers import ReviewSerializer
 from .serializers import UserSerializer, YamdbRoleSerializer
@@ -104,7 +103,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class GenreViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    pagination_class = PageNumberPagination
+    lookup_field = 'slug'
+    permission_classes = [IsAdminOrReadOnly, ]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', ]
 
 
 class TitleViewSet(viewsets.ModelViewSet):
