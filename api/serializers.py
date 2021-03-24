@@ -50,17 +50,32 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = 'name', 'slug'
+        fields = ('name', 'slug')
         model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = 'name', 'slug'
+        fields = ('name', 'slug')
         model = Genre
 
 
+class CategoryRelatedField(serializers.SlugRelatedField):
+    def to_representation(self, obj):
+        return CategorySerializer(obj).data
+
+
+class GenreRelatedField(serializers.SlugRelatedField):
+    def to_representation(self, obj):
+        return GenreSerializer(obj).data
+
+
 class TitleSerializer(serializers.ModelSerializer):
+    genre = GenreRelatedField(slug_field='slug', queryset=Genre.objects.all(),
+                              many=True)
+    category = CategoryRelatedField(slug_field='slug',
+                                    queryset=Category.objects.all())
+
     class Meta:
         fields = '__all__'
         model = Title

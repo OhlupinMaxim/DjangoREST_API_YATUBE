@@ -11,6 +11,9 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField('Genre', related_name='titles', blank=True)
 
+    class Meta:
+        ordering = ['pk']
+
     def __str__(self):
         return self.name
 

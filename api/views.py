@@ -12,7 +12,7 @@ from user.models import User
 from user.permissions import IsAdmin
 from user.permissions import IsAdminOrReadOnly
 from user.permissions import IsAuthorOrAdminOrModerator
-from .serializers import CategorySerializer, GenreSerializer
+from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 from .serializers import CommentSerializer
 from .serializers import ReviewSerializer
 from .serializers import UserSerializer, YamdbRoleSerializer
@@ -107,10 +107,13 @@ class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     pagination_class = PageNumberPagination
     lookup_field = 'slug'
-    permission_classes = [IsAdminOrReadOnly, ]
+    # permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', ]
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = [IsAdminOrReadOnly, ]

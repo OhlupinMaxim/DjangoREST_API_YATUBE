@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CategoryViewSet, GenreViewSet
+from .views import CategoryViewSet, GenreViewSet, TitleViewSet
 from .views import CommentViewSet
 from .views import ReviewViewSet
 from .views import UserViewSet
@@ -22,7 +22,7 @@ router_v1.register(
     "r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments'",
     CommentViewSet,
     "comments")
-#router_v1.register('')
+router_v1.register('titles', TitleViewSet, 'titles')
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),
