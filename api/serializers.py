@@ -3,6 +3,10 @@ from rest_framework.validators import UniqueValidator
 
 from user.models import User
 
+from review.models import Review
+
+from comment.models import Comment
+
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -27,3 +31,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 class YamdbRoleSerializer(UserSerializer):
     role = serializers.CharField(read_only=True)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        fields = "__all__"
+        model = Review
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        fields = "__all__"
+        model = Comment
