@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueValidator
 
 from comment.models import Comment
 from review.models import Review
-from title.models import Category, Genre
+from title.models import Category, Genre, Title
 from user.models import User
 
 
@@ -58,3 +58,9 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = 'name', 'slug'
         model = Genre
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Title
