@@ -5,22 +5,18 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from comment.models import Comment
+from review.models import Review
+from title.models import Category
+from title.models import Title
 from user.models import User
 from user.permissions import IsAdmin
+from user.permissions import IsAdminOrReadOnly
 from user.permissions import IsAuthorOrAdminOrModerator
-
-from title.models import Title
-from title.models import Category
-from title.models import Genre
-
-from review.models import Review
-
-from comment.models import Comment
-
-from .serializers import UserSerializer, YamdbRoleSerializer
+from .serializers import CategorySerializer
 from .serializers import CommentSerializer
 from .serializers import ReviewSerializer
-from .serializers import CategorySerializer
+from .serializers import UserSerializer, YamdbRoleSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -101,6 +97,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination
+    lookup_field = 'slug'
+    permission_classes = [IsAdminOrReadOnly, ]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', ]
 
 
 class GenreViewSet(viewsets.ModelViewSet):
