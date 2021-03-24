@@ -58,3 +58,12 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = 'name', 'slug'
         model = Genre
+
+
+class UserEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+
+class CodeEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    code = serializers.CharField()

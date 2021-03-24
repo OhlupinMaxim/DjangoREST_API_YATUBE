@@ -5,10 +5,10 @@ from .views import CategoryViewSet
 from .views import CommentViewSet
 from .views import ReviewViewSet
 from .views import UserViewSet
+from .views import EmailRegisterView, TokenView, UserViewSet
 
 router_v1 = DefaultRouter()
-
-router_v1.register('users', UserViewSet, 'users')
+router_v1.register('users', UserViewSet, basename='users')
 
 router_v1.register(
     "r'titles/(?P<title_id>\d+)/reviews'",
@@ -41,4 +41,14 @@ urlpatterns = [
         CategoryViewSet.as_view({'delete': 'destroy', }),
         name='genres_slug'
     ),
+    path(
+        'v1/auth/email/',
+        EmailRegisterView.as_view(),
+        name='get_confirmation_code'
+    ),
+    path(
+        'v1/auth/token/',
+        TokenView.as_view(),
+        name='get_token'
+    )
 ]
