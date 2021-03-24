@@ -7,6 +7,8 @@ from review.models import Review
 
 from comment.models import Comment
 
+from title.models import Category
+
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -47,3 +49,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = "__all__"
         model = Comment
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = 'name', 'slug'
+        model = Category

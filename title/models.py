@@ -9,9 +9,7 @@ class Title(models.Model):
         'Category', on_delete=models.SET_NULL, blank=True, null=True,
         related_name='titles'
     )
-    genre = models.ManyToManyField(
-        'Genre', related_name='titles', blank=True, null=True
-    )
+    genre = models.ManyToManyField('Genre', related_name='titles', blank=True)
 
     def __str__(self):
         return self.name

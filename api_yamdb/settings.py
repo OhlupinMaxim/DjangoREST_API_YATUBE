@@ -15,7 +15,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<<<< Temporary merge branch 1
     'rest_framework.authtoken',
     'rest_framework',
     'django_filters',
@@ -23,9 +22,7 @@ INSTALLED_APPS = [
     'comment',
     'user',
     'api',
-=========
     'title'
->>>>>>>>> Temporary merge branch 2
 ]
 
 MIDDLEWARE = [

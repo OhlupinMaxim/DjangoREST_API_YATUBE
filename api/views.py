@@ -20,6 +20,7 @@ from comment.models import Comment
 from .serializers import UserSerializer, YamdbRoleSerializer
 from .serializers import CommentSerializer
 from .serializers import ReviewSerializer
+from .serializers import CategorySerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -94,3 +95,17 @@ class CommentViewSet(viewsets.ModelViewSet):
         title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
         review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
         pass
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    pagination_class = PageNumberPagination
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    pass
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    pass
