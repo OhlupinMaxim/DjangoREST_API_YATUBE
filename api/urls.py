@@ -1,10 +1,9 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CategoryViewSet
+from .views import CategoryViewSet, GenreViewSet, TitleViewSet
 from .views import CommentViewSet
 from .views import ReviewViewSet
-from .views import UserViewSet
 from .views import EmailRegisterView, TokenView, UserViewSet
 
 router_v1 = DefaultRouter()
@@ -18,6 +17,7 @@ router_v1.register(
     "r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments'",
     CommentViewSet,
     "comments")
+router_v1.register('titles', TitleViewSet, 'titles')
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),
@@ -33,12 +33,12 @@ urlpatterns = [
     ),
     path(
         'v1/genres/',
-        CategoryViewSet.as_view({'get': 'list', 'post': 'create'}),
+        GenreViewSet.as_view({'get': 'list', 'post': 'create'}),
         name='genres'
     ),
     path(
         'v1/genres/<slug:slug>/',
-        CategoryViewSet.as_view({'delete': 'destroy', }),
+        GenreViewSet.as_view({'delete': 'destroy', }),
         name='genres_slug'
     ),
     path(
