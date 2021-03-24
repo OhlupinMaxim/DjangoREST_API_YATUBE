@@ -28,21 +28,21 @@ urlpatterns = [
     path(
         'v1/categories/',
         CategoryViewSet.as_view({'get': 'list', 'post': 'create'}),
-        name='Category'
+        name='category'
     ),
     path(
         'v1/categories/<slug:slug>/',
         CategoryViewSet.as_view({'delete': 'destroy', }),
-        name='Category'
+        name='category_slug'
     ),
     path(
         'v1/genres/',
         CategoryViewSet.as_view({'get': 'list', 'post': 'create'}),
-        name='Category'
+        name='genres'
     ),
     path(
         'v1/genres/<slug:slug>/',
         CategoryViewSet.as_view({'delete': 'destroy', }),
-        name='Category'
+        name='genres_slug'
     ),
 ]
