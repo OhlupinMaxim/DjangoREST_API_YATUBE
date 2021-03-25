@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django_filters.rest_framework import DjangoFilterBackend
+from title.filters import TitleFilter
 
 from comment.models import Comment
 from review.models import Review
@@ -46,6 +48,39 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class EmailRegisterView(APIView):
+    def post(self, request):
+        serializer = UserEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get('email')
+        user, create = User.objects.get_or_create(email=email)
+        if create:
+            user.username = email
+            user.save()
+        conf_code = default_token_generator.make_token(user)
+        send_confirmation_code(email, conf_code)
+        return Response(
+            f'Confirmation code will be sent to your {email}',
+            status=status.HTTP_200_OK
+        )
+
+
+class TokenView(APIView):
+    def post(self, request):
+        serializer = CodeEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get('email')
+        code = serializer.validated_data.get('code')
+        user = get_object_or_404(User, email=email)
+        if default_token_generator.check_token(user, code):
+            token = RefreshToken.for_user(user).access_token
+            return Response(
+                {'token': str(token)},
+                status=status.HTTP_200_OK
+            )
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -119,7 +154,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     pagination_class = PageNumberPagination
     lookup_field = 'slug'
-    # permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', ]
 
@@ -129,36 +164,4 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     permission_classes = [IsAdminOrReadOnly, ]
-
-
-class EmailRegisterView(APIView):
-    def post(self, request):
-        serializer = UserEmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data.get('email')
-        user, create = User.objects.get_or_create(email=email)
-        if create:
-            user.username = email
-            user.save()
-        conf_code = default_token_generator.make_token(user)
-        send_confirmation_code(email, conf_code)
-        return Response(
-            f'Confirmation code will be sent to your {email}',
-            status=status.HTTP_200_OK
-        )
-
-
-class TokenView(APIView):
-    def post(self, request):
-        serializer = CodeEmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data.get('email')
-        code = serializer.validated_data.get('code')
-        user = get_object_or_404(User, email=email)
-        if default_token_generator.check_token(user, code):
-            token = RefreshToken.for_user(user).access_token
-            return Response(
-                {'token': str(token)},
-                status=status.HTTP_200_OK
-            )
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    filterset_class = TitleFilter
