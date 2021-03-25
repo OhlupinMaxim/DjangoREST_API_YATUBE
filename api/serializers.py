@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
+from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 
 from comment.models import Comment
 from review.models import Review
@@ -33,10 +33,9 @@ class YamdbRoleSerializer(UserSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
-        fields = "__all__"
+        fields = ("id", "title", "text", "author", "score", "pub_date",)
         model = Review
 
 
@@ -44,7 +43,7 @@ class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
-        fields = "__all__"
+        fields = ("id", "text", "author", "pub_date",)
         model = Comment
 
 

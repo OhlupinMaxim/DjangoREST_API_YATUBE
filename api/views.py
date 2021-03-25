@@ -52,12 +52,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
-    permission_classes = [IsAuthorOrAdminOrModerator, ]
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
         return Review.objects.filter(title=title)
 
+    @action(detail=False, permission_classes=(IsAuthenticated,))
     def perform_create(self, serializer):
         title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
         serializer.save(
