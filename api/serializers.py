@@ -33,17 +33,20 @@ class YamdbRoleSerializer(UserSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(slug_field='username',
+                                          read_only=True)
 
     class Meta:
-        fields = ("id", "title", "text", "author", "score", "pub_date",)
+        fields = ['id', 'text', 'author', 'title', 'score', 'pub_date']
         model = Review
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    author = serializers.SlugRelatedField(slug_field='username',
+                                          read_only=True)
 
     class Meta:
-        fields = ("id", "text", "author", "pub_date",)
+        fields = ['id', 'text', 'author', 'pub_date']
         model = Comment
 
 

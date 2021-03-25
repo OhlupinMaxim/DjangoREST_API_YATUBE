@@ -4,6 +4,7 @@ from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -87,24 +88,17 @@ class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsAuthorOrAdminOrModerator,
+    ]
 
-    def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-        return Review.objects.filter(title=title)
-
-    @action(detail=False, permission_classes=(IsAuthenticated,))
     def perform_create(self, serializer):
         title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+        if Review.objects.filter(title=title, author=self.request.user).exists():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer.save(
             author=self.request.user,
-            title=title
-        )
-
-    def partial_update(self, request, *args, **kwargs):
-        # title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-        self.serializer_class.save(
-            text=kwargs.get("text"),
-            score=kwargs.get("score")
         )
 
 
@@ -112,30 +106,16 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     pagination_class = PageNumberPagination
-    permission_classes = [IsAuthorOrAdminOrModerator, ]
-
-    def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-        review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
-        return Comment.objects.filter(
-            title=title,
-            review=review
-        )
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsAuthorOrAdminOrModerator,
+    ]
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
         review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
         serializer.save(
-            title=title,
-            review=review,
             author=self.request.user
-        )
-
-    def partial_update(self, request, *args, **kwargs):
-        # title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-        # review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
-        self.serializer_class.save(
-            text=kwargs.get("text")
         )
 
 

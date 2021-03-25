@@ -8,12 +8,16 @@ from title.models import Title
 
 
 class Review(models.Model):
-    author = models.OneToOneField(User,
-                                  on_delete=models.CASCADE,
-                                  related_name="review_author")
-    title = models.OneToOneField(Title,
-                                 on_delete=models.CASCADE,
-                                 related_name="review_title")
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               related_name="review_author",
+                               blank=True,
+                               null=True)
+    title = models.ForeignKey(Title,
+                              on_delete=models.CASCADE,
+                              related_name="review_title",
+                              blank=True,
+                              null=True)
     pub_date = models.DateTimeField("Дата Публикации",
                                     auto_now_add=True,
                                     db_index=True)
