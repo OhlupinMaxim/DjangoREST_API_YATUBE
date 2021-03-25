@@ -1,4 +1,5 @@
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -140,7 +141,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('review_title__score')).all().order_by('pk')
     serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     permission_classes = [IsAdminOrReadOnly, ]
