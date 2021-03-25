@@ -146,3 +146,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     permission_classes = [IsAdminOrReadOnly, ]
     filterset_class = TitleFilter
+
+    def get_queryset(self):
+        return Title.objects.annotate(rating=Avg('review_title__score')).all().order_by('pk')
+
