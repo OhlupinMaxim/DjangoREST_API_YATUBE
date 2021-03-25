@@ -94,13 +94,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
         IsAuthorOrAdminOrModerator,
     ]
 
-    def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-        if Review.objects.filter(title=title, author=self.request.user).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(
-            author=self.request.user,
-        )
+    # def perform_create(self, serializer):
+    #     title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+    #     if Review.objects.filter(title=title, author=self.request.user).exists():
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+    #     serializer.save(
+    #         author=self.request.user,
+    #     )
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -112,12 +112,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         IsAuthorOrAdminOrModerator,
     ]
 
-    def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-        review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
-        serializer.save(
-            author=self.request.user
-        )
+    # def perform_create(self, serializer):
+    #     title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
+    #     review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
+    #     serializer.save(
+    #         author=self.request.user
+    #     )
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -141,7 +141,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('review_title__score')).all().order_by('pk')
+    queryset = Title.objects.all()
     serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     permission_classes = [IsAdminOrReadOnly, ]
