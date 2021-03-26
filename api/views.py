@@ -14,14 +14,12 @@ from review.models import Review
 from title.filters import TitleFilter
 from title.models import Category, Title, Genre
 from user.models import User
-from user.permissions import IsAdmin
-from user.permissions import IsAdminOrReadOnly
-from user.permissions import IsAuthorOrAdminOrModerator
-from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
+from user.permissions import (IsAdmin, IsAdminOrReadOnly,
+                              IsAuthorOrAdminOrModerator)
 from .serializers import (CodeEmailSerializer, UserEmailSerializer,
-                          UserSerializer, YamdbRoleSerializer)
-from .serializers import CommentSerializer
-from .serializers import ReviewSerializer
+                          UserSerializer, YamdbRoleSerializer,
+                          CategorySerializer, GenreSerializer, TitleSerializer,
+                          CommentSerializer, ReviewSerializer)
 from .utils import send_confirmation_code
 
 
@@ -140,9 +138,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = PageNumberPagination
     lookup_field = 'slug'
-    permission_classes = [IsAdminOrReadOnly, ]
+    #permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', ]
 
@@ -150,9 +147,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    pagination_class = PageNumberPagination
     lookup_field = 'slug'
-    permission_classes = [IsAdminOrReadOnly, ]
+    #permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', ]
 
@@ -161,40 +157,5 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('review_title__score')).all().order_by('pk')
     serializer_class = TitleSerializer
-    pagination_class = PageNumberPagination
-    permission_classes = [IsAdminOrReadOnly, ]
+    #permission_classes = [IsAdminOrReadOnly, ]
     filterset_class = TitleFilter
-
-
-
-class EmailRegisterView(APIView):
-    def post(self, request):
-        serializer = UserEmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data.get('email')
-        user, create = User.objects.get_or_create(email=email)
-        if create:
-            user.username = email
-            user.save()
-        conf_code = default_token_generator.make_token(user)
-        send_confirmation_code(email, conf_code)
-        return Response(
-            f'Confirmation code will be sent to your {email}',
-            status=status.HTTP_200_OK
-        )
-
-
-class TokenView(APIView):
-    def post(self, request):
-        serializer = CodeEmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data.get('email')
-        code = serializer.validated_data.get('code')
-        user = get_object_or_404(User, email=email)
-        if default_token_generator.check_token(user, code):
-            token = RefreshToken.for_user(user).access_token
-            return Response(
-                {'token': str(token)},
-                status=status.HTTP_200_OK
-            )
-        return Response(status=status.HTTP_400_BAD_REQUEST)

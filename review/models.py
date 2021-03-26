@@ -1,10 +1,9 @@
-from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 
-from user.models import User
-
 from title.models import Title
+from user.models import User
 
 
 class Review(models.Model):

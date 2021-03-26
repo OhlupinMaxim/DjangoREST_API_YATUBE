@@ -1,27 +1,21 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CategoryViewSet, GenreViewSet, TitleViewSet
-from .views import CommentViewSet
-from .views import ReviewViewSet
-from .views import EmailRegisterView, TokenView, UserViewSet
+from .views import (CategoryViewSet, GenreViewSet, TitleViewSet, CommentViewSet,
+                    ReviewViewSet, EmailRegisterView, TokenView, UserViewSet)
 
 router_v1 = DefaultRouter()
-
 router_v1.register('users', UserViewSet, 'users')
-
-"""
-    урлы для других моделей туточки
-"""
-
 router_v1.register(
     "r'titles/(?P<title_id>\d+)/reviews'",
     ReviewViewSet,
-    "reviews")
+    "reviews"
+)
 router_v1.register(
     "r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments'",
     CommentViewSet,
-    "comments")
+    "comments"
+)
 router_v1.register('titles', TitleViewSet, 'titles')
 
 urlpatterns = [
@@ -34,7 +28,7 @@ urlpatterns = [
     path(
         'v1/categories/<slug:slug>/',
         CategoryViewSet.as_view({'delete': 'destroy', }),
-        name='category_slug'
+        name='category_item'
     ),
     path(
         'v1/genres/',
@@ -44,7 +38,7 @@ urlpatterns = [
     path(
         'v1/genres/<slug:slug>/',
         GenreViewSet.as_view({'delete': 'destroy', }),
-        name='genres_slug'
+        name='genres_item'
     ),
 
     path(
