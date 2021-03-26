@@ -139,7 +139,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
-    #permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', ]
 
@@ -148,7 +148,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
-    #permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', ]
 
@@ -157,5 +157,5 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('review_title__score')).all().order_by('pk')
     serializer_class = TitleSerializer
-    #permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAdminOrReadOnly, ]
     filterset_class = TitleFilter
