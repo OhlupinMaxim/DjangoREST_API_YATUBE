@@ -158,15 +158,13 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(
+        rating=Avg('review_title__score')).all().order_by('pk')
     serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     permission_classes = [IsAdminOrReadOnly, ]
     filterset_class = TitleFilter
 
-    def get_queryset(self):
-        return Title.objects.annotate(
-            rating=Avg('review_title__score')).all().order_by('pk')
 
 
 class EmailRegisterView(APIView):
