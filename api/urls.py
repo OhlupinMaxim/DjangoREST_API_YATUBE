@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import CategoryViewSet, GenreViewSet, TitleViewSet
 from .views import CommentViewSet
 from .views import ReviewViewSet
-from .views import UserViewSet
+from .views import EmailRegisterView, TokenView, UserViewSet
 
 router_v1 = DefaultRouter()
 
@@ -46,4 +46,15 @@ urlpatterns = [
         GenreViewSet.as_view({'delete': 'destroy', }),
         name='genres_slug'
     ),
+
+    path(
+        'v1/auth/email/',
+        EmailRegisterView.as_view(),
+        name='get_confirmation_code'
+    ),
+    path(
+        'v1/auth/token/',
+        TokenView.as_view(),
+        name='get_token'
+    )
 ]

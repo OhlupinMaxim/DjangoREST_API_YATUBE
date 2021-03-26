@@ -32,6 +32,15 @@ class YamdbRoleSerializer(UserSerializer):
     role = serializers.CharField(read_only=True)
 
 
+class UserEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+
+class CodeEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    code = serializers.CharField()
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
 
