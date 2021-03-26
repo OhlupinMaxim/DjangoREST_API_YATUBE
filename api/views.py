@@ -17,13 +17,11 @@ from user.models import User
 from user.permissions import IsAdmin
 from user.permissions import IsAdminOrReadOnly
 from user.permissions import IsAuthorOrAdminOrModerator
-from .serializers import CategorySerializer, GenreSerializer
-from .serializers import CommentSerializer
-from .serializers import ReviewSerializer
-from .serializers import UserSerializer, YamdbRoleSerializer
-
+from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 from .serializers import (CodeEmailSerializer, UserEmailSerializer,
                           UserSerializer, YamdbRoleSerializer)
+from .serializers import CommentSerializer
+from .serializers import ReviewSerializer
 from .utils import send_confirmation_code
 
 
