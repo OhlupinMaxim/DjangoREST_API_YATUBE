@@ -1,6 +1,7 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -9,23 +10,25 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django_filters.rest_framework import DjangoFilterBackend
+
 from title.filters import TitleFilter
 
 from comment.models import Comment
+
 from review.models import Review
+
 from title.models import Category, Title, Genre
 
 from user.models import User
 from user.permissions import IsAdmin
 from user.permissions import IsAdminOrReadOnly
 from user.permissions import IsAuthorOrAdminOrModerator
-from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
-from .serializers import CommentSerializer
-from .serializers import ReviewSerializer
 
 from .serializers import (CodeEmailSerializer, UserEmailSerializer,
-                          UserSerializer, YamdbRoleSerializer)
+                          UserSerializer, YamdbRoleSerializer,
+                          CommentSerializer, ReviewSerializer,
+                          CategorySerializer, GenreSerializer, TitleSerializer)
+
 from .utils import send_confirmation_code
 
 
@@ -86,38 +89,44 @@ class TokenView(APIView):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    pagination_class = PageNumberPagination
     permission_classes = [
         IsAuthenticatedOrReadOnly,
         IsAuthorOrAdminOrModerator,
     ]
 
-    # def perform_create(self, serializer):
-    #     title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-    #     if Review.objects.filter(title=title, author=self.request.user).exists():
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-    #     serializer.save(
-    #         author=self.request.user,
-    #     )
+    def get_queryset(self):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        return Review.objects.filter(title=title)
+
+    def perform_create(self, serializer):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    pagination_class = PageNumberPagination
     permission_classes = [
         IsAuthenticatedOrReadOnly,
         IsAuthorOrAdminOrModerator,
     ]
 
-    # def perform_create(self, serializer):
-    #     title = get_object_or_404(Title, id=self.kwargs.get("title_id"))
-    #     review = get_object_or_404(Review, id=self.kwargs.get("review_id"))
-    #     serializer.save(
-    #         author=self.request.user
-    #     )
+    def get_queryset(self):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        return Comment.objects.filter(
+            title=title,
+            review=review
+        )
+
+    def perform_create(self, serializer):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        serializer.save(
+            author=self.request.user,
+            title=title,
+            review=review
+        )
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -148,5 +157,5 @@ class TitleViewSet(viewsets.ModelViewSet):
     filterset_class = TitleFilter
 
     def get_queryset(self):
-        return Title.objects.annotate(rating=Avg('review_title__score')).all().order_by('pk')
-
+        return Title.objects.annotate(
+            rating=Avg('review_title__score')).all().order_by('pk')

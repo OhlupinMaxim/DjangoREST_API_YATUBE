@@ -5,10 +5,10 @@ from comment.models import Comment
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = (
-        "review",
-        "author",
-        "pub_date",
-        "text"
+        'review',
+        'author',
+        'pub_date',
+        'text'
     )
 
 

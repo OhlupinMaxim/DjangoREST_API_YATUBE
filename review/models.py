@@ -10,15 +10,15 @@ from title.models import Title
 class Review(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name="review_author",
+                               related_name='review_author',
                                blank=True,
                                null=True)
     title = models.ForeignKey(Title,
                               on_delete=models.CASCADE,
-                              related_name="review_title",
+                              related_name='review_title',
                               blank=True,
                               null=True)
-    pub_date = models.DateTimeField("Дата Публикации",
+    pub_date = models.DateTimeField('Дата Публикации',
                                     auto_now_add=True,
                                     db_index=True)
     score = models.IntegerField(default=1,
