@@ -3,9 +3,9 @@ from django.db import models
 
 
 class YamdbRoles(models.TextChoices):
-    USER = ('user', 'user', )
-    ADMIN = ('admin', 'admin', )
-    MODERATOR = ('moderator', 'moderator', )
+    USER = ('user', 'user',)
+    ADMIN = ('admin', 'admin',)
+    MODERATOR = ('moderator', 'moderator',)
 
 
 class User(AbstractUser):
@@ -30,4 +30,4 @@ class User(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         verbose_name = 'User'
-        ordering = ('id', )
+        ordering = ('id',)

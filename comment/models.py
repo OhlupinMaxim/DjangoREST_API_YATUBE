@@ -1,10 +1,8 @@
 from django.db import models
 
 from review.models import Review
-
-from user.models import User
-
 from title.models import Title
+from user.models import User
 
 
 class Comment(models.Model):
@@ -28,6 +26,9 @@ class Comment(models.Model):
                                     auto_now_add=True,
                                     db_index=True)
     text = models.TextField(null=False, blank=True)
+
+    class Meta:
+        ordering = ['pub_date']
 
     def __str__(self):
         return self.text[:15]
