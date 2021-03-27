@@ -5,12 +5,12 @@ from review.models import Review
 
 class ReviewAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "author",
-        "title",
-        "pub_date",
-        "score",
-        "text"
+        'id',
+        'author',
+        'title',
+        'pub_date',
+        'score',
+        'text'
     )
 
 
