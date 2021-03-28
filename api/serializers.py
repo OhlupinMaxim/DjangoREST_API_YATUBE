@@ -42,9 +42,15 @@ class CodeEmailSerializer(serializers.Serializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """
+    Класс ReviewSerializer. Сериализатор для модели Review.
+    Сериализует поля: 'id', 'text', 'author', 'title', 'score', 'pub_date'.
+    Есть проверка на случай повторного создания одного и того же Отзыва.
+    (Описана в методе класса validate)
+    """
     author = serializers.SlugRelatedField(slug_field='username',
                                           read_only=True)
-    title = serializers.SlugRelatedField(slug_field="id",
+    title = serializers.SlugRelatedField(slug_field='id',
                                          read_only=True)
 
     class Meta:
@@ -52,8 +58,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
 
     def validate(self, attrs):
-        user = self.context["request"].user
-        title_id = str(self.context["request"].META["PATH_INFO"]).split("/")[4]
+        user = self.context['request'].user
+        title_id = str(self.context['request'].META['PATH_INFO']).split('/')[4]
         title = Title.objects.filter(
             id=title_id).first()
         reviews = Review.objects.filter(
@@ -61,26 +67,32 @@ class ReviewSerializer(serializers.ModelSerializer):
             title=title
         )
         if reviews.count() > 0:
-            if self.context["request"].META['REQUEST_METHOD'] == "POST":
-                raise serializers.ValidationError("Уже существует")
+            if self.context['request'].META['REQUEST_METHOD'] == 'POST':
+                raise serializers.ValidationError('Уже существует')
         return attrs
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Класс CommentSerializer. Сериализатор для модели Comment.
+    Сериализует все поля модели.
+    Есть проверка на случай пустых данных.
+    (Описана в методе класса validate)
+    """
     author = serializers.SlugRelatedField(slug_field='username',
                                           read_only=True)
-    title = serializers.SlugRelatedField(slug_field="id",
+    title = serializers.SlugRelatedField(slug_field='id',
                                          read_only=True)
 
-    review = serializers.SlugRelatedField(slug_field="id",
+    review = serializers.SlugRelatedField(slug_field='id',
                                           read_only=True)
 
     class Meta:
-        fields = "__all__"
+        fields = '__all__'
         model = Comment
 
     def validate(self, attrs):
-        if self.context["request"].META['REQUEST_METHOD'] == "POST":
+        if self.context['request'].META['REQUEST_METHOD'] == 'POST':
             if len(attrs) == 0:
                 raise serializers.ValidationError
         return attrs
