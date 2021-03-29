@@ -3,17 +3,30 @@ from django.db import models
 
 
 class YamdbRoles(models.TextChoices):
+    """
+    Список ролей пользователей Yamdb API,
+    """
     USER = ('user', 'user',)
     ADMIN = ('admin', 'admin',)
     MODERATOR = ('moderator', 'moderator',)
 
 
 class User(AbstractUser):
-    bio = models.TextField(max_length=200, blank=True)
+    """
+    Модель User(Пользователи),
+    на основе встроенной Django-модели AbstractUser,
+    дополненная полями bio и role
+    """
+    bio = models.TextField(
+        max_length=200,
+        blank=True,
+        verbose_name='Информация о пользователе'
+    )
     role = models.CharField(
         max_length=40,
         choices=YamdbRoles.choices,
-        default=YamdbRoles.USER
+        default=YamdbRoles.USER,
+        verbose_name='Роль пользователя'
     )
 
     def __str__(self):
@@ -30,4 +43,5 @@ class User(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         verbose_name = 'User'
-        ordering = ('id',)
+        verbose_name_plural = 'Users'
+        ordering = ('id', )

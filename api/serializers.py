@@ -8,6 +8,11 @@ from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Класс UserSerializer. Сериализатор для модели User.
+    Сериализует поля: 'first_name', 'last_name', ''username',
+    'bio', 'email', 'role'.
+    """
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
@@ -29,14 +34,28 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class YamdbRoleSerializer(UserSerializer):
+    """
+    Класс YamdbRoleSerializer. Сериализатор, наследованный
+    от UserSerialzer, с добавлением дополнительного поля role
+    """
     role = serializers.CharField(read_only=True)
 
 
 class UserEmailSerializer(serializers.Serializer):
+    """
+    Класс UserEmailSerializer. Сериализатор, наследованный
+    от базового сериалайзера, для сериализации поля email.
+    Используется при вызове endpoint `/auth/email/`
+    """
     email = serializers.EmailField(required=True)
 
 
 class CodeEmailSerializer(serializers.Serializer):
+    """
+    Класс CodeEmailSerializer. Сериализатор, наследованный
+    от базового сериалайзера, для сериализации полей email и code.
+    Используется при вызове endpoint `/auth/token/`
+    """
     email = serializers.EmailField(required=True)
     code = serializers.CharField()
 
@@ -99,28 +118,58 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели Category(Категория).
+    Поля:
+    name - соотвествует модели. Чтение и запись.
+    slug - соотвествует модели. Чтение и запись.
+    """
     class Meta:
         fields = ('name', 'slug')
         model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели Genre(Жанр).
+    Поля:
+    name - соотвествует модели, чтение и запись.
+    slug - соотвествует модели, чтение и запись.
+    """
     class Meta:
         fields = ('name', 'slug')
         model = Genre
 
 
 class CategoryRelatedField(serializers.SlugRelatedField):
+    """
+    Поле отношений для category в TitileSerializer. Возвращает ключ - значение.
+    """
+
     def to_representation(self, obj):
         return CategorySerializer(obj).data
 
 
 class GenreRelatedField(serializers.SlugRelatedField):
+    """
+    Поле отношений для genre в TitileSerializer. Возвращает ключ - значение.
+    """
+
     def to_representation(self, obj):
         return GenreSerializer(obj).data
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор модели Title(Произведния).
+    Поля:
+    name - соотвестует модели, чтение и запись.
+    year - соотвестует модели, чтение и запись.
+    description - соотвестует модели, чтение и запись.
+    category - поле отношений через slug, чтение и запись.
+    genre - поле отношений через slug, чтение и запись, множественное.
+    rating - дополнительное поле тип int, не относится к модели, только чтение.
+    """
     genre = GenreRelatedField(slug_field='slug', queryset=Genre.objects.all(),
                               many=True)
     category = CategoryRelatedField(slug_field='slug',

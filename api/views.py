@@ -12,18 +12,40 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from comment.models import Comment
 from review.models import Review
 from title.filters import TitleFilter
-from title.models import Category, Title, Genre
+from title.models import Category, Genre, Title
 from user.models import User
 from user.permissions import (IsAdmin, IsAdminOrReadOnly,
                               IsAuthorOrAdminOrModerator)
-from .serializers import (CodeEmailSerializer, UserEmailSerializer,
-                          UserSerializer, YamdbRoleSerializer,
-                          CategorySerializer, GenreSerializer, TitleSerializer,
-                          CommentSerializer, ReviewSerializer)
+
+from .serializers import (CategorySerializer, CodeEmailSerializer,
+                          CommentSerializer, GenreSerializer, ReviewSerializer,
+                          TitleSerializer, UserEmailSerializer, UserSerializer,
+                          YamdbRoleSerializer)
 from .utils import send_confirmation_code
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet класс для модели User.
+    Разрешения: IsAdmin, IsAuthenticated
+    Реализует HTTP методы: GET, POST, PATCH, DELETE
+
+    Администратор может:
+
+    * Получить список всех пользователей. (GET)
+        (Вернет 200 и список пользователей, или ошибку 401)
+    * Получить пользователя по его `username`. (GET)
+        (Вернет 200 и данные пользователя, или ошибки 401/403/404)
+    * Создать/изменить/удалить пользователя. (POST/PATCH/DELETE)
+        (Вернет 200 при успешном запросе, или ошибки 400/401/403/404)
+
+    Авторизованный пользователь может:
+
+    * Получить данные своей учетной записи. (GET)
+        (Вернет 200 и объект учетной записи, или ошибку 400)
+    * Изменить данные своей учетной записи. (PATCH)
+        (Вернет 200 при успешном запросе, или ошибку 400)
+    """
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = 'username'
@@ -47,6 +69,14 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class EmailRegisterView(APIView):
+    """
+    Класс APIView для получения confirmation_code по
+        email пользователя
+
+    Возвращает:
+    * статус 200, отправляет код подтверждение на email пользователя
+    * статус 400, если email не указан
+    """
     def post(self, request):
         serializer = UserEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -64,6 +94,15 @@ class EmailRegisterView(APIView):
 
 
 class TokenView(APIView):
+    """
+    Класс APIView для получения access токена для
+        доступа к ресурсам API
+
+    Возвращает:
+    * статус 200 и сгенерированный token
+    * статус 400, если не указан email или
+        указан неверный confirmation_code
+    """
     def post(self, request):
         serializer = CodeEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -181,6 +220,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    ModelViewSet для Category(Категория).Отдельный объект возвращает на
+    основе slug(Путь категории).
+    Права доступа: администратор - чтение и запись, остальные - только чтение.
+    Поиск: по полю name.
+    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
@@ -190,6 +235,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class GenreViewSet(viewsets.ModelViewSet):
+    """
+    ModelViewSet для Genre(Жанр).Отдельный объект возвращает на
+    основе slug(Путь жанра).
+    Права доступа: администратор - чтение и запись, остальные - только чтение.
+    Поиск: по полю name.
+    """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
@@ -199,6 +250,13 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
+    """
+    ModelViewSet для Title(Произведение).
+    Права доступа: администратор - чтение и запись, остальные - только чтение.
+    Поиск: по genre__slug, category__slug, year, name.
+    Возвращает дополнительное значение rating - серднее значение всех объектов,
+    модели Review(Отзыв), отнесенных к объекту модели Title(Произведение).
+    """
     queryset = Title.objects.annotate(
         rating=Avg('review_title__score')).all().order_by('pk')
     serializer_class = TitleSerializer
