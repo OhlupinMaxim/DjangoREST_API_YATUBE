@@ -17,7 +17,7 @@ class User(AbstractUser):
     на основе встроенной Django-модели AbstractUser,
     дополненная полями bio и role
     """
-    bio = models.TextField(
+    bio = models.CharField(
         max_length=200,
         blank=True,
         verbose_name='Информация о пользователе'
@@ -28,6 +28,11 @@ class User(AbstractUser):
         default=YamdbRoles.USER,
         verbose_name='Роль пользователя'
     )
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+        ordering = ('id', )
 
     def __str__(self):
         return self.username
@@ -40,8 +45,3 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == YamdbRoles.MODERATOR
-
-    class Meta(AbstractUser.Meta):
-        verbose_name = 'User'
-        verbose_name_plural = 'Users'
-        ordering = ('id', )

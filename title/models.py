@@ -1,3 +1,4 @@
+import textwrap
 from datetime import date
 
 from django.core.validators import MaxValueValidator
@@ -18,30 +19,40 @@ class Title(models.Model):
     Сортровка - primary key.
     """
     name = models.CharField(
-        max_length=200, verbose_name='Название произведения'
+        max_length=200,
+        verbose_name='Название произведения'
     )
     year = models.PositiveSmallIntegerField(
-        default=0, verbose_name='Год',
+        default=0,
+        verbose_name='Год',
         validators=[MaxValueValidator(date.today().year)]
     )
     description = models.TextField(
-        blank=True, null=True, verbose_name='Описание произведения'
+        blank=True,
+        verbose_name='Описание произведения'
     )
     category = models.ForeignKey(
-        'Category', on_delete=models.SET_NULL, blank=True, null=True,
-        related_name='titles', verbose_name='Категория'
+        'Category',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='titles',
+        verbose_name='Категория'
     )
     genre = models.ManyToManyField(
-        'Genre', related_name='titles', blank=True, verbose_name='Жанры'
+        'Genre',
+        related_name='titles',
+        blank=True,
+        verbose_name='Жанры'
     )
 
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-        ordering = ['pk']
+        ordering = ('pk',)
 
     def __str__(self):
-        return self.name
+        return textwrap.shorten(self.name, 15, placeholder='...')
 
 
 class Category(models.Model):
@@ -54,13 +65,15 @@ class Category(models.Model):
     """
     name = models.CharField(max_length=200, verbose_name='Название категории')
     slug = models.SlugField(
-        max_length=20, unique=True, verbose_name='Путь категории'
+        max_length=20,
+        unique=True,
+        verbose_name='Путь категории'
     )
 
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ['slug']
+        ordering = ('slug',)
 
     def __str__(self):
         return self.name
@@ -76,13 +89,15 @@ class Genre(models.Model):
     """
     name = models.CharField(max_length=200, verbose_name='Название жанра')
     slug = models.SlugField(
-        max_length=20, unique=True, verbose_name='Путь жанра'
+        max_length=20,
+        unique=True,
+        verbose_name='Путь жанра'
     )
 
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        ordering = ['slug']
+        ordering = ('slug',)
 
     def __str__(self):
         return self.name

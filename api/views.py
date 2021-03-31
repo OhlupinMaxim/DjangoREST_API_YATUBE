@@ -16,7 +16,6 @@ from title.models import Category, Genre, Title
 from user.models import User
 from user.permissions import (IsAdmin, IsAdminOrReadOnly,
                               IsAuthorOrAdminOrModerator)
-
 from .serializers import (CategorySerializer, CodeEmailSerializer,
                           CommentSerializer, GenreSerializer, ReviewSerializer,
                           TitleSerializer, UserEmailSerializer, UserSerializer,
@@ -51,11 +50,14 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     permission_classes = (IsAuthenticated, IsAdmin,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = 'username'
+    search_fields = ('username',)
 
-    @action(methods=['get', 'patch'], detail=False,
-            permission_classes=(IsAuthenticated,),
-            url_path='me')
+    @action(
+        methods=['get', 'patch'],
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+        url_path='me'
+    )
     def user_profile(self, request):
         user = get_object_or_404(User, id=request.user.id)
         if request.method == 'GET':
@@ -77,6 +79,7 @@ class EmailRegisterView(APIView):
     * статус 200, отправляет код подтверждение на email пользователя
     * статус 400, если email не указан
     """
+
     def post(self, request):
         serializer = UserEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -103,6 +106,7 @@ class TokenView(APIView):
     * статус 400, если не указан email или
         указан неверный confirmation_code
     """
+
     def post(self, request):
         serializer = CodeEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -150,10 +154,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         Объект оценки не найден (статус 404).)
     """
     serializer_class = ReviewSerializer
-    permission_classes = [
+    permission_classes = (
         IsAuthenticatedOrReadOnly,
         IsAuthorOrAdminOrModerator,
-    ]
+    )
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -196,10 +200,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         Объект оценки не найден (статус 404).)
     """
     serializer_class = CommentSerializer
-    permission_classes = [
+    permission_classes = (
         IsAuthenticatedOrReadOnly,
         IsAuthorOrAdminOrModerator,
-    ]
+    )
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -229,9 +233,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
-    permission_classes = [IsAdminOrReadOnly, ]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name', ]
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -244,9 +248,9 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
-    permission_classes = [IsAdminOrReadOnly, ]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name', ]
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -260,5 +264,5 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('review_title__score')).all().order_by('pk')
     serializer_class = TitleSerializer
-    permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleFilter

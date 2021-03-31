@@ -67,13 +67,17 @@ class ReviewSerializer(serializers.ModelSerializer):
     Есть проверка на случай повторного создания одного и того же Отзыва.
     (Описана в методе класса validate)
     """
-    author = serializers.SlugRelatedField(slug_field='username',
-                                          read_only=True)
-    title = serializers.SlugRelatedField(slug_field='id',
-                                         read_only=True)
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
+    title = serializers.SlugRelatedField(
+        slug_field='id',
+        read_only=True
+    )
 
     class Meta:
-        fields = ['id', 'text', 'author', 'title', 'score', 'pub_date']
+        fields = ('id', 'text', 'author', 'title', 'score', 'pub_date',)
         model = Review
 
     def validate(self, attrs):
@@ -98,13 +102,19 @@ class CommentSerializer(serializers.ModelSerializer):
     Есть проверка на случай пустых данных.
     (Описана в методе класса validate)
     """
-    author = serializers.SlugRelatedField(slug_field='username',
-                                          read_only=True)
-    title = serializers.SlugRelatedField(slug_field='id',
-                                         read_only=True)
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
+    title = serializers.SlugRelatedField(
+        slug_field='id',
+        read_only=True
+    )
 
-    review = serializers.SlugRelatedField(slug_field='id',
-                                          read_only=True)
+    review = serializers.SlugRelatedField(
+        slug_field='id',
+        read_only=True
+    )
 
     class Meta:
         fields = '__all__'
@@ -124,6 +134,7 @@ class CategorySerializer(serializers.ModelSerializer):
     name - соотвествует модели. Чтение и запись.
     slug - соотвествует модели. Чтение и запись.
     """
+
     class Meta:
         fields = ('name', 'slug')
         model = Category
@@ -136,6 +147,7 @@ class GenreSerializer(serializers.ModelSerializer):
     name - соотвествует модели, чтение и запись.
     slug - соотвествует модели, чтение и запись.
     """
+
     class Meta:
         fields = ('name', 'slug')
         model = Genre
@@ -170,10 +182,15 @@ class TitleSerializer(serializers.ModelSerializer):
     genre - поле отношений через slug, чтение и запись, множественное.
     rating - дополнительное поле тип int, не относится к модели, только чтение.
     """
-    genre = GenreRelatedField(slug_field='slug', queryset=Genre.objects.all(),
-                              many=True)
-    category = CategoryRelatedField(slug_field='slug',
-                                    queryset=Category.objects.all())
+    genre = GenreRelatedField(
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
+    category = CategoryRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all()
+    )
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:

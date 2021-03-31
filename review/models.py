@@ -1,3 +1,5 @@
+import textwrap
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -19,32 +21,31 @@ class Review(models.Model):
         verbose_name='Автор Отзыва',
         on_delete=models.CASCADE,
         related_name='review_author',
-        blank=True,
-        null=True)
+        null=True
+    )
     title = models.ForeignKey(
         Title,
         verbose_name='Произведение',
         on_delete=models.CASCADE,
         related_name='review_title',
-        blank=True,
-        null=True)
+        null=True
+    )
     pub_date = models.DateTimeField(
         verbose_name='Дата Публикации',
         auto_now_add=True,
-        db_index=True)
+        db_index=True
+    )
     score = models.IntegerField(
         verbose_name='Оценка',
         default=1,
-        validators=[
-            MaxValueValidator(10),
-            MinValueValidator(1)
-        ])
+        validators=[MaxValueValidator(10), MinValueValidator(1)]
+    )
     text = models.TextField(verbose_name='Текст отзыва')
 
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        ordering = ['pub_date']
+        ordering = ('pub_date',)
 
     def __str__(self):
-        return self.text[:15]
+        return textwrap.shorten(self.text, 15, placeholder='...', )
